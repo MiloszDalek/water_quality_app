@@ -31,7 +31,7 @@ const Prediction: React.FC = () => {
       Object.entries(formData).map(([key, value]) => [key, parseFloat(value)])
     );
 
-    const response = await fetch('http://localhost:8000/predict', {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/predict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ const Prediction: React.FC = () => {
         confidence,
     };
 
-    const response = await fetch('http://localhost:8000/save-result', {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/save-result`, {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',

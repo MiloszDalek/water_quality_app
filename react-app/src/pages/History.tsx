@@ -55,7 +55,7 @@ const History: React.FC = () => {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/results')
+    fetch(`${process.env.REACT_APP_API_URL}/results`)
       .then(res => res.json())
       .then(data => setResults(data))
       .catch(err => console.error('Fetch error:', err));
@@ -78,7 +78,7 @@ const History: React.FC = () => {
     if (!window.confirm("Are you sure you want to delete this sample?")) return;
 
     try {
-        const response = await fetch(`http://localhost:8000/results/${id}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/results/${id}`, {
         method: 'DELETE',
         });
 
