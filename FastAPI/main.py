@@ -16,7 +16,10 @@ model = joblib.load("model.pkl")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://water-quality-app-ashy.vercel.app",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
