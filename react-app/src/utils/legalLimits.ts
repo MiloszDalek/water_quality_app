@@ -10,6 +10,19 @@ export type ParameterName =
   | 'Turbidity'
   | 'TSS';
 
+export const parameterUnits: Record<ParameterName, string> = {
+  Ammonium: 'mg/L',
+  Phosphate: 'mg/L',
+  COD: 'mg/L',
+  BOD: 'mg/L',
+  Conductivity: 'mS/m',
+  PH: '',
+  Nitrogen: 'mg/L',
+  Nitrate: 'mg/L',
+  Turbidity: 'NTU',
+  TSS: 'mg/L',
+};
+
 export type Limit = { min?: number; max?: number };
 
 const legalLimits: Record<ParameterName, Limit> = {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import legalLimits, { ParameterName } from '../utils/legalLimits';
+import legalLimits, { ParameterName, parameterUnits } from '../utils/legalLimits';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -124,10 +124,14 @@ const ChartComponent: React.FC<Props> = ({ data }) => {
     ],
   };
 
+  const labelWithUnits = (param: ParameterName) =>
+  `${param}${parameterUnits[param] ? ` (${parameterUnits[param]})` : ''}`;
+
+
   return (
     <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
       <div style={{ maxWidth: 800, margin: 'auto' }}>
-        <h3>Parameter over Time</h3>
+        <h3>{labelWithUnits(selectedParam)} over Time</h3>
         <select
           value={selectedParam}
           onChange={e => setSelectedParam(e.target.value as ParameterName)}

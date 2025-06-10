@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ChartComponent from "../components/ChartComponent";
 import './History.css'
-import legalLimits, {ParameterName} from "../utils/legalLimits";
+import legalLimits, {ParameterName, parameterUnits} from "../utils/legalLimits";
 
 interface Result {
   id: number;
@@ -136,7 +136,7 @@ const History: React.FC = () => {
                     <li key={param}>
                         <span className="param-label">{param === 'PH' ? 'pH' : param === 'Nitrogen' ? 'Total Nitrogen' : param}:</span>
                         <span className={`param-value ${getValueClass(param, sample[param])}`}>
-                           {sample[param]}
+                           {sample[param]} {parameterUnits[param]}
                         </span>
                     </li>
                 ))}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { parameterUnits, ParameterName } from '../utils/legalLimits';
 import './Prediction.css';
 
 const Prediction: React.FC = () => {
@@ -8,7 +9,7 @@ const Prediction: React.FC = () => {
     COD: '',
     BOD: '',
     Conductivity: '',
-    PH: '',
+    pH: '',
     Nitrogen: '',
     Nitrate: '',
     Turbidity: '',
@@ -76,7 +77,7 @@ const Prediction: React.FC = () => {
         {Object.entries(formData).map(([key, value]) => (
           <div key={key} style={{ marginBottom: 10 }}>
             <label>
-              <span>{key}:</span>
+              <span>{key} {parameterUnits[key as ParameterName] ? ` (${parameterUnits[key as ParameterName]})` : ''}:</span>
               <input
                 type="number"
                 name={key}
