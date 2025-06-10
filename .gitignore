@@ -5,6 +5,7 @@ __pycache__/
 db.sqlite3
 .env
 .db
+predictions.db
 
 # Node (React)
 node_modules/

@@ -9,7 +9,7 @@ const Prediction: React.FC = () => {
     COD: '',
     BOD: '',
     Conductivity: '',
-    pH: '',
+    PH: '',
     Nitrogen: '',
     Nitrate: '',
     Turbidity: '',

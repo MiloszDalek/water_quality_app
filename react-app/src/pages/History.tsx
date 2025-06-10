@@ -36,6 +36,12 @@ const THRESHOLD = 0.8; // 80%
 
 const getValueClass = (param: ParameterName, value: number): string => {
   const limit = legalLimits[param];
+  // if (param === 'PH') {
+  //   if (limit.min !== undefined && limit.max !== undefined) {
+  //     limit.min = limit.min - 2;
+  //     limit.max = limit.max + 2;
+  //   }
+  // }
   if (!limit) return '';
 
   if (limit.max !== undefined) {
@@ -46,7 +52,7 @@ const getValueClass = (param: ParameterName, value: number): string => {
     if (value < limit.min) return 'exceed-limit';
     if (value <= limit.min * (2 - THRESHOLD)) return 'near-limit';
   }
-  return '';    
+  return '';
 };
 
 
