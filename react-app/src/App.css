@@ -61,3 +61,21 @@ body {
 .main-content {
   padding: 2rem;
 }
+
+.navbar-download {
+  margin-left: auto;
+  padding-right: 1rem;
+}
+
+.download-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.download-link:hover {
+  text-decoration: underline;
+  color: #66ccff;
+}
