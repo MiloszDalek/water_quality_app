@@ -72,6 +72,12 @@ const Prediction: React.FC = () => {
 
   return (
     <div className='prediction-container'>
+      <div className='warning-banner'>
+        <span className="icon">⚠️</span>
+        <span className="text">
+          This feature is a prototype based on insufficient data. The original goal was to analyze anomalies in samples to identify their cause, but the current model only predicts whether a sample is at risk of exceeding legal limits. This remains an area for future development.
+        </span>
+      </div>
       <h1>Enter water parameters</h1>
       <form onSubmit={handleSubmit}>
         {Object.entries(formData).map(([key, value]) => (

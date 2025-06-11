@@ -31,7 +31,7 @@ const legalLimits: Record<ParameterName, Limit> = {
   COD: { max: 125 },
   BOD: { max: 25 },
   Conductivity: { max: 100 },
-  PH: { min: 5, max: 11 },
+  PH: { min: 7, max: 9 },
   Nitrogen: { max: 25 },
   Nitrate: { max: 50 },
   Turbidity: { max: 50 },
