@@ -5,24 +5,27 @@ import './Home.css';
 const HomePage: React.FC = () => {
   return (
     <div className="home-container">
-      <h1>Welcome to Water Quality Predictor</h1>
+      <h1>BluElephant Water Analyzer</h1>
       <p>
-        This application uses a <strong>Random Forest Classifier</strong> model, trained on an artificial dataset, to predict whether a water sample falls within the permitted range of parameters for surface water.
+        This application is designed to help you store, explore, and analyze water sample measurements with ease.
       </p>
-      <h2>How to use the app?</h2>
+      <h2>Main Features</h2>
       <ul>
         <li>
-          Navigate to the <strong>Prediction</strong> tab to enter the water sample parameters and check its status.
+          Add and manage samples categorized as <strong>influent</strong>, <strong>effluent</strong>, or <strong>sludge</strong>.
         </li>
         <li>
-          All predictions are saved and can be viewed anytime in the <strong>History</strong> tab.
+          Explore trends and changes in specific water quality parameters over time.
         </li>
         <li>
-          Additionally, you can compare how the levels of different parameters have changed over time in the same <strong>History</strong> tab.
+          Export your data to <strong>Excel</strong> or <strong>CSV</strong> for further processing or reporting.
+        </li>
+        <li>
+          Use the <strong>Prediction</strong> tab to test an experimental feature that evaluates whether a sample might exceed legal thresholds. Note: this is a prototype based on limited data.
         </li>
       </ul>
       <p>
-        Feel free to explore the app and monitor water quality with ease!
+        Whether you're monitoring treatment performance or tracking environmental impact, this tool makes water quality analysis more accessible.
       </p>
     </div>
   );

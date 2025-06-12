@@ -1,22 +1,30 @@
-# Water Quality Predictor
+# BluElephant Water Analyzer
 
-**Water Quality Predictor** — an intuitive web application designed to help you monitor water quality easily and reliably.
+**BluElephant Water Analyzer** — a web-based tool supporting the **BluElephant** decentralized wastewater treatment system by enabling intuitive tracking and analysis of water sample data.
 
 ## What does this app do?
 
-This app uses a machine learning model (Random Forest Classifier) trained on water sample data to predict whether the water meets the required environmental standards for surface water quality.
+This application helps you store, organize, and analyze measurements from water samples collected at various stages of the treatment process — including **influent**, **effluent**, and **sludge**.
 
-You can enter measurements of different water parameters and instantly see if the sample is within safe limits. Every prediction is saved, so you can review past samples and observe trends over time — all in one place.
+It allows you to explore historical trends in selected parameters, compare sample types, and export data for external analysis. The app also includes a prototype **prediction feature** that flags samples potentially exceeding legal limits, based on an early-stage machine learning model.
 
 ## Key Features
 
-- **Real-time water quality predictions** based on user input.
-- **History tracking** to save and revisit past predictions.
-- **Visual comparison** of how water parameters have changed over time.
-- Designed for easy use on both desktop and mobile devices.
+- **Sample management** for multiple categories: influent, effluent, and sludge.
+- **Dynamic parameter analysis** with visual charts and filters.
+- **Data export** to Excel or CSV for offline work or reporting.
+- **Prototype prediction module** that uses a Random Forest model to detect potential legal threshold exceedance.
+- **History view** to review and analyze past samples.
 
 ## Technologies Used
 
-- **Backend:** Built with [FastAPI] — a modern Python framework for creating fast and reliable APIs.
-- **Machine Learning:** Utilizes a Random Forest Classifier model to make predictions.
-- **Frontend:** Developed using [React], a popular JavaScript library for building user interfaces.
+- **Backend:** [FastAPI](https://fastapi.tiangolo.com) — a high-performance Python web framework.
+- **Database:** [SQLite](https://www.sqlite.org/index.html) — lightweight and serverless, suitable for small-scale deployments.
+- **Machine Learning:** Random Forest Classifier (prototype feature).
+- **Frontend:** [React](https://react.dev) — a modern library for building responsive user interfaces.
+
+## Status
+
+> 🔧 This project is under active development.  
+> 🧪 The prediction feature is a **prototype** and should not be used for critical decisions.  
+> 📊 Core functionality focuses on sample tracking and parameter analysis.
