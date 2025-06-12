@@ -20,6 +20,8 @@ const Prediction: React.FC = () => {
 
   const [confidence, setConfidence] = useState<number | null>(null);
 
+  const sample_type = 'prediction';
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -55,6 +57,7 @@ const Prediction: React.FC = () => {
         ),
         prediction,
         confidence,
+        sample_type,
     };
 
     const response = await fetch(`${process.env.REACT_APP_API_URL}/save-result`, {

@@ -15,7 +15,7 @@ const App = () => {
         <div className="navbar-links">
           <Link to="/home">Home</Link>
           <span className="separator">|</span>
-          <Link to="/history">Measurements</Link>
+          <Link to="/measurements">Measurements</Link>
           <span className="separator">|</span>
           <Link to="/prediction">Prediction</Link>
         </div>
@@ -43,7 +43,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Home />} />
           <Route path="/prediction" element={<Prediction />} />
-          <Route path="/history" element={<History />} />
+          <Route path="/measurements" element={<History />} />
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </div>  

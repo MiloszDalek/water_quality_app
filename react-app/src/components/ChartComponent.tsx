@@ -14,7 +14,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-interface Result {
+interface Sample {
   timestamp: string;
   Ammonium: number;
   Phosphate: number;
@@ -30,7 +30,7 @@ interface Result {
 }
 
 interface Props {
-  data: Result[];
+  data: Sample[];
 }
 
 const options = {

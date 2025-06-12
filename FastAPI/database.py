@@ -2,16 +2,17 @@ from sqlalchemy import create_engine, Column, Integer, Float, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
+from sqlalchemy import String
 
-DATABASE_URL = "sqlite:///./predictions.db"
+DATABASE_URL = "sqlite:///./samples.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-class PredictionRecord(Base):
-    __tablename__ = "predictions"
+class SampleRecord(Base):
+    __tablename__ = "samples"
 
     id = Column(Integer, primary_key=True, index=True)
     Ammonium = Column(Float, nullable=False)
@@ -26,4 +27,5 @@ class PredictionRecord(Base):
     TSS = Column(Float, nullable=False)
     prediction = Column(Integer, nullable=False)
     confidence = Column(Float, nullable=False)
+    sample_type = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)

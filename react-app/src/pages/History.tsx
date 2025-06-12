@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ChartComponent from "../components/ChartComponent";
+import SamplesFilter from "../components/SamplesFilter";
+import ExportPanel from "../components/ExportPanel";
 import './History.css'
 import legalLimits, {ParameterName, parameterUnits} from "../utils/legalLimits";
 
-interface Result {
+interface Sample {
   id: number;
   timestamp: string;
   prediction: number;
@@ -21,13 +23,13 @@ interface Result {
   [key: string]: any;
 }
 
-interface ResultCardProps {
-  sample: Result;
+interface SampleCardProps {
+  sample: Sample;
   onClick: () => void;
 }
 
-interface ResultDetailsProps {
-  sample: Result;
+interface SampleDetailsProps {
+  sample: Sample;
   onClose: () => void;
   onDelete: (id: number) => void;
 }
@@ -51,15 +53,26 @@ const getValueClass = (param: ParameterName, value: number): string => {
 
 
 const History: React.FC = () => {
-  const [results, setResults] = useState<Result[]>([]);
+  const [samples, setSamples] = useState<Sample[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [selectedType, setSelectedType] = useState("all");
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/results`)
+    fetch(`${process.env.REACT_APP_API_URL}/samples?sample_type=${selectedType}`)
       .then(res => res.json())
-      .then(data => setResults(data))
+      .then(data => setSamples(data))
       .catch(err => console.error('Fetch error:', err));
-  }, []);
+  }, [selectedType]);
+
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedType(e.target.value);
+  };
+
+  const handleExport = (fileName: string, fileType: "csv" | "excel") => {
+    console.log("Export requested:", fileName, fileType);
+    alert("Exported");
+    // Tu później dodasz kod do eksportu danych `samples`
+  };
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Unknown';
@@ -78,7 +91,7 @@ const History: React.FC = () => {
     if (!window.confirm("Are you sure you want to delete this sample?")) return;
 
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/results/${id}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/samples/${id}`, {
         method: 'DELETE',
         });
 
@@ -87,7 +100,7 @@ const History: React.FC = () => {
         throw new Error(errorData.detail || 'Delete failed');
         }
 
-        setResults(prev => prev.filter(result => result.id !== id));
+        setSamples(prev => prev.filter(sample => sample.id !== id));
         setExpandedId(null);
     } catch (err) {
         console.error('Delete error:', err);
@@ -96,8 +109,8 @@ const History: React.FC = () => {
   };
 
 
-  const ResultCard: React.FC<ResultCardProps> = ({ sample, onClick }) => {
-    const boxClass = sample.prediction === 0 ? 'box-result success' : 'box-result warning';
+  const SampleCard: React.FC<SampleCardProps> = ({ sample, onClick }) => {
+    const boxClass = sample.prediction === 0 ? 'box-sample success' : 'box-sample warning';
 
     return (
         <div onClick={onClick} className="card">
@@ -112,8 +125,8 @@ const History: React.FC = () => {
   };
 
 
-  const ResultDetails: React.FC<ResultDetailsProps> = ({ sample, onClose }) => {
-    const boxClass = sample.prediction === 0 ? 'box-result success' : 'box-result warning';
+  const SampleDetails: React.FC<SampleDetailsProps> = ({ sample, onClose }) => {
+    const boxClass = sample.prediction === 0 ? 'box-sample success' : 'box-sample warning';
 
     const parameters: ParameterName[] = [
         'Ammonium', 'Phosphate', 'COD', 'BOD', 'Conductivity',
@@ -149,17 +162,21 @@ const History: React.FC = () => {
 
   return (
     <div className="history-container">
-        <ChartComponent data={results} />
-        {results.map((sample) =>
+        <ChartComponent data={samples} />
+        <div className="toolbar">
+          <SamplesFilter selectedType={selectedType} setSelectedType={setSelectedType} />
+          <ExportPanel onExport={handleExport} />
+        </div>  
+        {samples.map((sample) =>
         expandedId === sample.id ? (
-            <ResultDetails
+            <SampleDetails
             key={sample.id}
             sample={sample}
             onClose={() => setExpandedId(null)}
             onDelete={onDelete}
             />
         ) : (
-            <ResultCard
+            <SampleCard
             key={sample.id}
             sample={sample}
             onClick={() => setExpandedId(sample.id)}

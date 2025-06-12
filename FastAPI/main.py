@@ -1,12 +1,13 @@
-from fastapi import FastAPI, Depends, HTTPException, Body
+from fastapi import FastAPI, Depends, HTTPException, Body, Query
 from pydantic import BaseModel
 from datetime import datetime
 import joblib
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
-from database import Base, engine, SessionLocal, PredictionRecord
+from database import Base, engine, SessionLocal, SampleRecord
 from typing import List, Annotated
 from sqlalchemy.orm import Session
+from typing import Literal, Optional
 
 app = FastAPI()
 
@@ -45,12 +46,13 @@ class InputData(BaseModel):
     TSS: float
 
 
-class SaveResultData(InputData):
+class SaveSampleData(InputData):
     prediction: int
     confidence: float
+    sample_type: Literal["all", "influent", "effluent", "sludge", "prediction"]
 
 
-class PredictionSummary(BaseModel):
+class SampleSummary(BaseModel):
     id: int
     Ammonium: float
     Phosphate: float
@@ -64,6 +66,7 @@ class PredictionSummary(BaseModel):
     TSS: float
     prediction: int
     confidence: float
+    sample_type: str
     timestamp: datetime
 
     class Config:
@@ -88,9 +91,8 @@ def predict(data: InputData):
 
 
 @app.post("/save-result")
-def save(data: SaveResultData = Body(...)):
-    db = SessionLocal()
-    db_record = PredictionRecord(
+def save(db: Annotated[Session, Depends(get_db)], data: SaveSampleData = Body(...)):
+    db_record = SampleRecord(
         Ammonium=data.Ammonium, 
         Phosphate=data.Phosphate, 
         COD=data.COD, 
@@ -102,39 +104,47 @@ def save(data: SaveResultData = Body(...)):
         Turbidity=data.Turbidity, 
         TSS=data.TSS, 
         prediction=data.prediction, 
-        confidence=data.confidence)
+        confidence=data.confidence,
+        sample_type=data.sample_type
+    )
 
     db.add(db_record)
     db.commit()
     db.refresh(db_record)
-    db.close()
     return {"message": "Saved successfully"}
 
 
 
-@app.get("/results", response_model=List[PredictionSummary])
-def get_all_results(db: Annotated[Session, Depends(get_db)]):
-    results = db.query(PredictionRecord).order_by(PredictionRecord.timestamp.desc()).all()
-    return results
+@app.get("/samples", response_model=List[SampleSummary])
+def get_all_samples(db: Annotated[Session, Depends(get_db)],
+                     sample_type: Optional[str] = Query(None, description="Filter by sample type")
+                    ):
+    query = db.query(SampleRecord)
+    if sample_type and sample_type != 'all':
+        query = query.filter(SampleRecord.sample_type == sample_type)
+    
+    samples = query.order_by(SampleRecord.timestamp.desc()).all()
+    
+    return samples
 
 
 
-@app.get("/results/{prediction_id}", response_model=PredictionSummary)
-def get_prediction(prediction_id: int, db: Session = Depends(get_db)):
-    record = db.query(PredictionRecord).filter(PredictionRecord.id == prediction_id).first()
+@app.get("/samples/{sample_id}", response_model=SampleSummary)
+def get_sample(sample_id: int, db: Session = Depends(get_db)):
+    sample = db.query(SampleRecord).filter(SampleRecord.id == sample_id).first()
+    if not sample:
+        raise HTTPException(status_code=404, detail="Sample not found")
+    return sample
+
+
+
+@app.delete("/samples/{sample_id}")
+def delete_record(sample_id: int, db: Annotated[Session, Depends(get_db)]): # db typu Session o wartości z Depends(get_db)
+    record = db.query(SampleRecord).filter(SampleRecord.id == sample_id).first()
     if not record:
-        raise HTTPException(status_code=404, detail="Prediction not found")
-    return record
-
-
-
-@app.delete("/results/{result_id}")
-def delete_record(result_id: int, db: Annotated[Session, Depends(get_db)]): # db typu Session o wartości z Depends(get_db)
-    record = db.query(PredictionRecord).filter(PredictionRecord.id == result_id).first()
-    if not record:
-        raise HTTPException(status_code=404, detail="Result not found")
+        raise HTTPException(status_code=404, detail="Sample not found")
 
     db.delete(record)
     db.commit()
 
-    return {"message": f"Result with id {result_id} has been deleted"}
+    return {"message": f"Sample with id {sample_id} has been deleted"}
