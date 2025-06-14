@@ -155,6 +155,13 @@
   font-size: 1rem;
 }
 
+.prediction.centered {
+  text-align: center;
+  margin: 1rem auto;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
 .confidence {
   font-size: 1rem;
 }
@@ -175,6 +182,30 @@
   background-color: #fff4e6;
   color: #c76a00;
   border: 3px solid #c76a00;
+}
+
+.neutral {
+  background-color: #f0f0f0;
+  color: #555;
+  border: 3px solid #ccc;
+}
+
+.influent {
+  background-color: #b2e1fb;
+  color: #023e8a;
+  border: 3px solid #023e8a;
+}
+
+.sludge {
+  background-color: #e8e7e7;
+  color: #555;
+  border: 3px solid #555;
+}
+
+.effluent {
+  background-color: #b0fff6;
+  color: #1b5f56;
+  border: 3px solid #1b5f56;
 }
 
 .param-value.near-limit {
@@ -234,7 +265,7 @@
   border-radius: 4px;
 }
 
-.export-button {
+.confirm-button {
   padding: 6px 12px;
   background-color: #007bff;
   color: white;
@@ -243,6 +274,17 @@
   cursor: pointer;
 }
 
-.export-button:hover {
+.confirm-button:hover {
   background-color: #0056b3;
+}
+
+.add-sample-container {
+  margin: 5px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  position: relative;
 }

@@ -34,7 +34,7 @@ const ExportPanel: React.FC<ExportPanelProps> = ({ onExport }) => {
         <option value="excel">Excel (.xlsx)</option>
         <option value="csv">CSV (.csv)</option>
       </select>
-      <button onClick={handleExport} className="export-button">
+      <button onClick={handleExport} className="confirm-button">
         Export
       </button>
     </div>

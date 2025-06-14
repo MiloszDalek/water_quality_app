@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import ChartComponent from "../components/ChartComponent";
 import SamplesFilter from "../components/SamplesFilter";
 import ExportPanel from "../components/ExportPanel";
+import AddSampleComponent from "../components/AddSampleComponent";
 import './History.css'
 import legalLimits, {ParameterName, parameterUnits} from "../utils/legalLimits";
+import { exportToExcel, exportToCSV } from "../utils/exportUtils";
 
 interface Sample {
   id: number;
   timestamp: string;
   prediction: number;
   confidence: number;
+  sample_type: string;
   Ammonium: number;
   Phosphate: number;
   COD: number;
@@ -56,6 +59,7 @@ const History: React.FC = () => {
   const [samples, setSamples] = useState<Sample[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [selectedType, setSelectedType] = useState("all");
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/samples?sample_type=${selectedType}`)
@@ -69,9 +73,43 @@ const History: React.FC = () => {
   };
 
   const handleExport = (fileName: string, fileType: "csv" | "excel") => {
-    console.log("Export requested:", fileName, fileType);
-    alert("Exported");
-    // Tu później dodasz kod do eksportu danych `samples`
+    if (!samples || samples.length === 0) {
+        alert("No data to export.");
+        return;
+      }
+    
+    const isPrediction = selectedType === 'prediction' || selectedType === 'all';
+
+    const filteredSamples = samples.map(({ id, timestamp, prediction, confidence, ...rest }) => {
+      const base: any = {
+        ID: id,
+        Timestamp: new Date(timestamp).toLocaleString(),
+      };
+
+      Object.entries(rest).forEach(([key, value]) => {
+        const displayName =
+          key === "PH" ? "pH" :          
+          key === "Nitrogen" ? "Nitrogen Total" :
+          key === "sample_type" ? "Sample Type" :
+          key;
+
+        const unit = parameterUnits[key as ParameterName] || "";
+        base[unit ? `${displayName} (${unit})` : displayName] = value;
+      });
+
+    if (isPrediction && prediction !== -1 && confidence !== -1) {
+      base.Prediction = prediction === 1 ? "warning" : "normal";
+      base.Confidence = `${confidence}%`;
+    }
+
+      return base;
+    });
+
+    if (fileType === "csv") {
+      exportToCSV(filteredSamples, fileName);
+    } else {
+      exportToExcel(filteredSamples, fileName);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -110,15 +148,26 @@ const History: React.FC = () => {
 
 
   const SampleCard: React.FC<SampleCardProps> = ({ sample, onClick }) => {
-    const boxClass = sample.prediction === 0 ? 'box-sample success' : 'box-sample warning';
+    const isPrediction = sample.sample_type === 'prediction';
+    const boxClass = isPrediction
+      ? sample.prediction === 0 
+        ? 'box-sample success' 
+        : 'box-sample warning'
+      : `box-sample ${sample.sample_type}`;
 
     return (
         <div onClick={onClick} className="card">
             <p className="card-date">{formatDate(sample.timestamp)}</p>
-            <div className={boxClass}>   
-                <p className="prediction">{sample.prediction === 0 ? 'Far from exceeding' : 'Risk of exceeding'}</p>
-                <p className="box-separator">|</p>
-                <p className="confidence">Confidence: {sample.confidence}%</p>
+            <div className={boxClass}> 
+              {isPrediction ? (
+                <>
+                  <p className="prediction">{sample.prediction === 0 ? 'Far from exceeding' : 'Risk of exceeding'}</p>
+                  <p className="box-separator">|</p>
+                  <p className="confidence">Confidence: {sample.confidence}%</p>
+                </>
+              ) : (
+                <p className="prediction">{sample.sample_type.charAt(0).toUpperCase() + sample.sample_type.slice(1)}</p>
+              )}
             </div>
         </div>
     );
@@ -126,7 +175,12 @@ const History: React.FC = () => {
 
 
   const SampleDetails: React.FC<SampleDetailsProps> = ({ sample, onClose }) => {
-    const boxClass = sample.prediction === 0 ? 'box-sample success' : 'box-sample warning';
+    const isPrediction = sample.sample_type === 'prediction';
+    const boxClass = isPrediction
+      ? sample.prediction === 0
+        ? 'box-sample success'
+        : 'box-sample warning'
+      : `box-sample ${sample.sample_type}`;
 
     const parameters: ParameterName[] = [
         'Ammonium', 'Phosphate', 'COD', 'BOD', 'Conductivity',
@@ -138,10 +192,16 @@ const History: React.FC = () => {
             <button className="close-button" onClick={onClose}>&times;</button>    
             <div style={{textAlign:'center', margin: '0 auto', maxWidth: '500px'}}>
                 <h3>Prediction date: {formatDate(sample.timestamp)}</h3>
-                <div className={boxClass}>   
-                    <p className="prediction">{sample.prediction === 0 ? 'Far from exceeding' : 'Risk of exceeding'}</p>
-                    <p className="box-separator">|</p>
-                    <p className="confidence">Confidence: {sample.confidence}%</p>
+                <div className={boxClass}>
+                  {isPrediction ? (  
+                    <>
+                      <p className="prediction">{sample.prediction === 0 ? 'Far from exceeding' : 'Risk of exceeding'}</p>
+                      <p className="box-separator">|</p>
+                      <p className="confidence">Confidence: {sample.confidence}%</p>
+                    </>
+                  ) : (
+                    <p className="prediction">{sample.sample_type.charAt(0).toUpperCase() + sample.sample_type.slice(1)}</p>
+                  )}
                 </div>
             </div>
             <ul>
@@ -162,11 +222,28 @@ const History: React.FC = () => {
 
   return (
     <div className="history-container">
+        <SamplesFilter selectedType={selectedType} setSelectedType={setSelectedType} />
         <ChartComponent data={samples} />
         <div className="toolbar">
-          <SamplesFilter selectedType={selectedType} setSelectedType={setSelectedType} />
           <ExportPanel onExport={handleExport} />
+          <button onClick={() => setShowForm(true)} className="add-button">
+             + Add Sample
+          </button>
         </div>  
+        {showForm && (
+        <div className="add-sample-container">
+          <AddSampleComponent
+            onClose={() => setShowForm(false)}
+            onSampleAdded={() => {
+              setShowForm(false);
+              fetch(`${process.env.REACT_APP_API_URL}/samples?sample_type=${selectedType}`)
+                .then(res => res.json())
+                .then(data => setSamples(data))
+                .catch(err => console.error('Fetch error:', err));
+            }}
+          />
+        </div>
+        )}
         {samples.map((sample) =>
         expandedId === sample.id ? (
             <SampleDetails
