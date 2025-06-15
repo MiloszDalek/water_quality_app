@@ -1,8 +1,8 @@
-from sqlalchemy import create_engine, Column, Integer, Float, DateTime
+from sqlalchemy import create_engine, Column, Integer, Float, DateTime, String, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
-from sqlalchemy import String
+
 
 DATABASE_URL = "sqlite:///./samples.db"
 
@@ -29,3 +29,18 @@ class SampleRecord(Base):
     confidence = Column(Float, nullable=False)
     sample_type = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="samples") 
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)
+
+    samples = relationship("SampleRecord", back_populates="user")
