@@ -83,7 +83,7 @@ const App = () => {
 
         <div className="ml-auto px-4 md:flex">
           <a
-            href="/Startup_Procedure_BE.pdf"
+            href="/Start up document BE.pdf"
             download
             className="flex items-center text-white font-bold hover:underline hover:text-[#66ccff] transition-colors"
           >
