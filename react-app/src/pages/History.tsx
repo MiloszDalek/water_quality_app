@@ -4,7 +4,8 @@ import SamplesFilter from "../components/SamplesFilter";
 import ExportPanel from "../components/ExportPanel";
 import AddSampleComponent from "../components/AddSampleComponent";
 import './History.css'
-import legalLimits, {ParameterName, parameterUnits} from "../utils/legalLimits";
+import legalLimits, { parameterUnits } from "../utils/legalLimits";
+import type { ParameterName } from "../utils/legalLimits";
 import { exportToExcel, exportToCSV } from "../utils/exportUtils";
 
 interface Sample {
@@ -62,15 +63,11 @@ const History: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/samples?sample_type=${selectedType}`)
+    fetch(`${import.meta.env.VITE_API_URL}/samples?sample_type=${selectedType}`)
       .then(res => res.json())
       .then(data => setSamples(data))
       .catch(err => console.error('Fetch error:', err));
   }, [selectedType]);
-
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedType(e.target.value);
-  };
 
   const handleExport = (fileName: string, fileType: "csv" | "excel") => {
     if (!samples || samples.length === 0) {
@@ -129,7 +126,7 @@ const History: React.FC = () => {
     if (!window.confirm("Are you sure you want to delete this sample?")) return;
 
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/samples/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/samples/${id}`, {
         method: 'DELETE',
         });
 
@@ -236,7 +233,7 @@ const History: React.FC = () => {
             onClose={() => setShowForm(false)}
             onSampleAdded={() => {
               setShowForm(false);
-              fetch(`${process.env.REACT_APP_API_URL}/samples?sample_type=${selectedType}`)
+              fetch(`${import.meta.env.VITE_API_URL}/samples?sample_type=${selectedType}`)
                 .then(res => res.json())
                 .then(data => setSamples(data))
                 .catch(err => console.error('Fetch error:', err));

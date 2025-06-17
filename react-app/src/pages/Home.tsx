@@ -1,4 +1,3 @@
-// HomePage.tsx
 import React from 'react';
 import './Home.css';
 

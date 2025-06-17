@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import legalLimits, { ParameterName, parameterUnits } from '../utils/legalLimits';
+import legalLimits, { parameterUnits } from '../utils/legalLimits';
+import type { ParameterName } from '../utils/legalLimits';
 import {
   Chart as ChartJS,
   CategoryScale,

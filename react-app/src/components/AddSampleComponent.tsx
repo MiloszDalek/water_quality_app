@@ -34,7 +34,7 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
     };
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/save-result`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/save-result`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -47,6 +47,10 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
 
       onSampleAdded();
       onClose();
+
+      const data = await response.json();
+      alert(data.message);
+      
     } catch (error) {
       console.error('Submit error:', error);
       alert('Failed to add sample');

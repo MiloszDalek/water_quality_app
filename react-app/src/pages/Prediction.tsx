@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { parameterUnits, ParameterName } from '../utils/legalLimits';
+import { parameterUnits } from '../utils/legalLimits';
+import type { ParameterName } from '../utils/legalLimits';
 import './Prediction.css';
 
 const Prediction: React.FC = () => {
@@ -34,7 +35,7 @@ const Prediction: React.FC = () => {
       Object.entries(formData).map(([key, value]) => [key, parseFloat(value)])
     );
 
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/predict`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/predict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ const Prediction: React.FC = () => {
         sample_type,
     };
 
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/save-result`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/save-result`, {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
