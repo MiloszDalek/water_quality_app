@@ -1,12 +1,19 @@
-from sqlalchemy import create_engine, Column, Integer, Float, DateTime, String, Boolean, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, Float, String, Boolean, ForeignKey, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-from datetime import datetime
+from datetime import date
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-DATABASE_URL = "sqlite:///./samples.db"
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL not found in .env")
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+DB_URL = DATABASE_URL
+
+engine = create_engine(DB_URL)  #  , connect_args={"check_same_thread": False}) - for sqlite only
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
@@ -28,10 +35,10 @@ class SampleRecord(Base):
     prediction = Column(Integer, nullable=False)
     confidence = Column(Float, nullable=False)
     sample_type = Column(String, nullable=False)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(Date, default=date.today)
 
     user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", back_populates="samples") 
+    user = relationship("User", back_populates="samples")
 
 
 class User(Base):

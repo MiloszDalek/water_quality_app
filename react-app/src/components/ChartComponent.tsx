@@ -9,11 +9,12 @@ import {
   PointElement,
   LineElement,
   Title,
+  Filler,
   Tooltip,
   Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Filler, Tooltip, Legend);
 
 interface Sample {
   timestamp: string;
@@ -36,6 +37,7 @@ interface Props {
 
 const options = {
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       labels: {
@@ -107,10 +109,7 @@ const ChartComponent: React.FC<Props> = ({ data }) => {
     labels: sortedData.map(d => new Date(d.timestamp).toLocaleString(undefined, {
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit', 
-      hour: '2-digit',
-      minute: '2-digit',
-      second: undefined,
+      day: '2-digit',
     })),
     datasets: [
       {
@@ -130,13 +129,15 @@ const ChartComponent: React.FC<Props> = ({ data }) => {
 
 
   return (
-    <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
-      <div style={{ maxWidth: 800, margin: 'auto' }}>
-        <h3>{labelWithUnits(selectedParam)} over Time</h3>
+    <div className="bg-white w-full rounded-lg shadow-md max-w-3xl mx-auto">
+      <div className="p-5 pb-0">
+        <h3 className="text-lg font-semibold mb-4 text-center sm:text-left">
+          {labelWithUnits(selectedParam)} over Time
+        </h3>
         <select
           value={selectedParam}
           onChange={e => setSelectedParam(e.target.value as ParameterName)}
-          style={{ marginBottom: 20, padding: 5 }}
+          className="w-full max-w-xs px-3 py-2 mb-0 md:mb-2 border border-gray-300 rounded shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
         >
           <option value="Ammonium">Ammonium</option>
           <option value="Phosphate">Phosphate</option>
@@ -149,8 +150,11 @@ const ChartComponent: React.FC<Props> = ({ data }) => {
           <option value="Turbidity">Turbidity</option>
           <option value="TSS">TSS</option>
         </select>
-
-        <Line data={chartData} options={options}/>
+      </div>
+      <div className="w-full relative min-h-[250px] sm:min-h-[300px] md:min-h-[350px]" style={{ paddingTop: '50%' }}>
+        <div className="absolute top-0 left-0 w-full h-full">
+          <Line data={chartData} options={options} />
+        </div>
       </div>
     </div>
   );

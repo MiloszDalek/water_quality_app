@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getToken } from '../utils/auth';
 
 interface AddSampleComponentProps {
   onClose: () => void;
@@ -18,6 +19,7 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
     Nitrate: '',
     Turbidity: '',
     TSS: '',
+    date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -33,10 +35,15 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
       confidence: -1,
     };
 
+    const token = getToken();
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/save-result`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(payload),
       });
 
@@ -58,35 +65,75 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
   };
 
   return (
-    <div className="form-container">
-      <button className="close-button" onClick={onClose}>&times;</button>
-      <h3>Add New Sample</h3>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Sample Type:
-          <select name="sample_type" value={formData.sample_type} onChange={handleChange}>
+    <div className="relative w-full max-w-[600px] mx-auto my-2 p-6 bg-white rounded-xl shadow-lg">
+      <button
+        className="absolute top-2 right-2 w-8 h-8 text-4xl pb-2 font-bold text-[#999] border-2 border-[#999] rounded-none flex items-center justify-center cursor-pointer transition-colors duration-200 hover:text-red-600 hover:border-3 hover:border-red-600 bg-transparent"
+        onClick={onClose}
+      >
+        &times;
+      </button>
+      <h3 className="text-xl font-semibold mb-4 text-gray-800">Add New Sample</h3>
+      <form onSubmit={handleSubmit} className="space-y-1 md:space-y-3">
+        {/* Sample type */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Sample Type:
+          </label>
+          <select
+            name="sample_type"
+            value={formData.sample_type}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
             <option value="influent">Influent</option>
             <option value="effluent">Effluent</option>
             <option value="sludge">Sludge</option>
           </select>
-        </label>
+        </div>
 
-        {Object.keys(formData).filter(k => k !== 'sample_type').map((param) => (
-          <label key={param}>
-            {param}:
-            <input
-              type="number"
-              name={param}
-              value={formData[param as keyof typeof formData]}
-              onChange={handleChange}
-              step="any"
-              required
-            />
+        {/* Dynamic numeric inputs */}
+        {Object.keys(formData)
+          .filter((k) => k !== 'sample_type' && k !== 'date')
+          .map((param) => (
+            <div key={param}>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {param}:
+              </label>
+              <input
+                type="number"
+                name={param}
+                value={formData[param as keyof typeof formData]}
+                onChange={handleChange}
+                step="any"
+                required
+                className="w-full px-3 py-2 border rounded text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+            </div>
+          ))}
+
+        {/* Date input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Date:
           </label>
-        ))}
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          />
+        </div>
 
-        <div style={{ marginTop: '1em' }}>
-          <button type="submit" className='confirm-button'>Add</button>
+        {/* Submit button */}
+        <div className="pt-4 flex justify-center">
+          <button
+            type="submit"
+            className="w-full md:max-w-[150px] bg-[#1e3a8a] hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow-sm transition-all"
+          >
+            Add
+          </button>
         </div>
       </form>
     </div>

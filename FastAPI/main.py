@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException, Body, Query
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import date
 import joblib
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
-from database import Base, engine, SessionLocal, SampleRecord
+from database import Base, engine, SessionLocal, SampleRecord, User
 from typing import List, Annotated
 from sqlalchemy.orm import Session
 from typing import Literal, Optional
@@ -58,6 +58,7 @@ class SaveSampleData(InputData):
     prediction: int
     confidence: float
     sample_type: Literal["all", "influent", "effluent", "sludge", "prediction"]
+    date: date
 
 
 class SampleSummary(BaseModel):
@@ -75,10 +76,18 @@ class SampleSummary(BaseModel):
     prediction: int
     confidence: float
     sample_type: str
-    timestamp: datetime
+    timestamp: date
 
     class Config:
         from_attributes = True
+
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+
+    class Config:
+        orm_mode = True
 
 
 @app.get("/", status_code=status.HTTP_200_OK, response_model=None)
@@ -88,12 +97,17 @@ async def user(user: dict = Depends(get_current_user), db: Session = Depends(get
     return {"User": user}
 
 
-columns = ["Ammonium (mg/l N)", "Ortho Phosphate (mg/l P)", "COD (mg/l O2)" ,"BOD (mg/l O2)", "Conductivity (mS/m)", "pH", "Nitrogen Total (mg/l N)", "Nitrate (mg/l NO3)", "Turbidity (NTU)", "TSS (mg/l)"]
+@app.get("/users", response_model=List[UserOut])
+def list_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
+
 
 @app.post("/predict")
 def predict(data: InputData):
     values = [[data.Ammonium, data.Phosphate, data.COD, data.BOD, data.Conductivity, data.PH, data.Nitrogen, data.Nitrate, data.Turbidity, data.TSS]]
-    
+    columns = ["Ammonium (mg/l N)", "Ortho Phosphate (mg/l P)", "COD (mg/l O2)" ,"BOD (mg/l O2)", "Conductivity (mS/m)", "pH", "Nitrogen Total (mg/l N)", "Nitrate (mg/l NO3)", "Turbidity (NTU)", "TSS (mg/l)"]
+
     df = pd.DataFrame(values, columns=columns)
     prediction = model.predict(df)[0]
     proba = model.predict_proba(df)[0]
@@ -124,7 +138,9 @@ def save(data: SaveSampleData = Body(...),
         TSS=data.TSS, 
         prediction=data.prediction, 
         confidence=data.confidence,
-        sample_type=data.sample_type
+        sample_type=data.sample_type,
+        timestamp=data.date,
+        user_id=user["id"]
     )
 
     db.add(db_record)
@@ -136,9 +152,12 @@ def save(data: SaveSampleData = Body(...),
 
 @app.get("/samples", response_model=List[SampleSummary])
 def get_all_samples(db: Session = Depends(get_db),
-                     sample_type: Optional[str] = Query(None, description="Filter by sample type")
+                    sample_type: Optional[str] = Query(None, description="Filter by sample type"),
+                    user_id: Optional[int] = None
                     ):
     query = db.query(SampleRecord)
+    if user_id:
+        query = query.filter(SampleRecord.user_id == user_id)
     if sample_type and sample_type != 'all':
         query = query.filter(SampleRecord.sample_type == sample_type)
     
@@ -158,10 +177,13 @@ def get_sample(sample_id: int, db: Session = Depends(get_db)):
 
 
 @app.delete("/samples/{sample_id}", response_model=None)
-def delete_record(sample_id: int, db: Session = Depends(get_db)): # db typu Session o wartości z Depends(get_db)
+def delete_record(sample_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     record = db.query(SampleRecord).filter(SampleRecord.id == sample_id).first()
     if not record:
         raise HTTPException(status_code=404, detail="Sample not found")
+
+    if record.user_id != current_user['id']:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this sample")
 
     db.delete(record)
     db.commit()

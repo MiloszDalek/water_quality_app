@@ -1,17 +1,14 @@
-// import React, { useState, useEffect } from 'react';
-import '../pages/History.css'
-
 const sampleTypes = ["all", "influent", "effluent", "sludge", "prediction"];
 
 function SamplesFilter({ selectedType, setSelectedType }: { selectedType: string, setSelectedType: (type: string) => void }) {
   return (
-    <div className="filter-dropdown">
-      <label htmlFor="sampleType">Show: </label>
+    <div className="flex items-center gap-2 mb-0">
+      <label htmlFor="sampleType" className="mb-0">Select type: </label>
       <select
         id="sampleType"
         value={selectedType}
         onChange={e => setSelectedType(e.target.value)}
-        className="dropdown"
+        className="px-3 py-2 border rounded w-full sm:w-40 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
       >
         {sampleTypes.map(type => (
           <option key={type} value={type}>

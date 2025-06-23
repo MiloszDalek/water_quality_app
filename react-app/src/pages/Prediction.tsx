@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { parameterUnits } from '../utils/legalLimits';
 import type { ParameterName } from '../utils/legalLimits';
-import './Prediction.css';
+import { getToken } from '../utils/auth';
+import { isAuthenticated } from '../utils/auth';
 
 const Prediction: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const Prediction: React.FC = () => {
     Nitrate: '',
     Turbidity: '',
     TSS: '',
+
   });
 
   const [prediction, setPrediction] = useState<number | null>(null);
@@ -59,12 +61,16 @@ const Prediction: React.FC = () => {
         prediction,
         confidence,
         sample_type,
+        date: new Date().toISOString().split('T')[0],
     };
+
+    const token = getToken();
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/save-result`, {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload),
     });
@@ -75,18 +81,18 @@ const Prediction: React.FC = () => {
 
 
   return (
-    <div className='prediction-container'>
-      <div className='warning-banner'>
-        <span className="icon">⚠️</span>
-        <span className="text">
+    <div className='max-w-[600px] mx-auto my-2 p-4 md:p-8 bg-white rounded-xl shadow-md'>
+      <div className='flex items-start bg-yellow-100 text-yellow-800 p-3 rounded mb-4 text-sm'>
+        <span className="mr-1 md:mr-3 md:text-xl sm:text-lg leading-tight">⚠️</span>
+        <span className="flex-1">
           This feature is a prototype based on insufficient data. The original goal was to analyze anomalies in samples to identify their cause, but the current model only predicts whether a sample is at risk of exceeding legal limits. This remains an area for future development.
         </span>
       </div>
-      <h1>Enter water parameters</h1>
-      <form onSubmit={handleSubmit}>
+      <h1 className="text-center text-gray-800 mb-6 text-2xl font-semibold">Enter water parameters</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2">
         {Object.entries(formData).map(([key, value]) => (
-          <div key={key} style={{ marginBottom: 10 }}>
-            <label>
+          <div key={key} className="w-full max-w-[400px]">
+            <label className="flex flex-col font-bold text-gray-700">
               <span>{key} {parameterUnits[key as ParameterName] ? ` (${parameterUnits[key as ParameterName]})` : ''}:</span>
               <input
                 type="number"
@@ -95,34 +101,42 @@ const Prediction: React.FC = () => {
                 onChange={handleChange}
                 step="any"
                 required
+                className="mt-1 p-2 border border-gray-300 rounded-md text-base w-full box-border"
               />
             </label>
           </div>
         ))}
-        <button className='predict-button' type="submit">Predict</button>
+        <button  
+          type="submit"
+          className="mt-4 max-w-[150px] w-full px-4 py-3 bg-blue-600 text-white rounded-md text-lg font-medium hover:bg-blue-700 transition-colors"
+        >
+          Predict
+        </button>
       </form>
       {prediction !== null && (
         <div
-          className={`result-box ${
-            prediction === 0 ? "result-success" : "result-warning"
-          }`}
-        >  
+          className={`mt-6 p-4 rounded-lg text-center font-bold text-lg shadow-md
+            ${prediction === 0 ? 'bg-green-100 text-green-800 border border-green-800' : 'bg-orange-100 text-orange-800 border border-orange-800'}`}
+        >
           {prediction === 0
             ? "Sample far from exceeding"
             : "Sample close to exceeding"}
           {confidence !== null && (
-            <p style={{ marginTop: 8, fontStyle: "italic" }}>
+            <p className="mt-2 italic text-base">
               Model confidence: {confidence.toFixed(1)}%
             </p>
           )}
-          <div
-            className={`save-button ${
-              prediction === 0 ? "button-success" : "button-warning"
-          }`}
-          >
-            <button onClick={handleSave} style={{ marginTop: '10px' }}>
+          <div className="mt-4">
+            {isAuthenticated() && (
+            <button 
+              onClick={handleSave}
+              className={`mt-2 w-48 px-4 py-3 rounded-md text-lg font-medium
+                ${prediction === 0 ? 'bg-green-800 text-green-100 hover:bg-green-900' : 'bg-orange-700 text-orange-100 hover:bg-orange-800'}
+                transition-colors`}
+            >
                 Save Result
             </button>
+            )}
           </div>
         </div>
       )}
