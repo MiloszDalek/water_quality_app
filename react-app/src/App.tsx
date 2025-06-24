@@ -25,7 +25,7 @@ const App = () => {
         {/* Hamburger (mobile) */}
         <div className="lg:hidden flex-1 border-2 border-white rounded-md mx-2 px-2 py-2 flex items-center">
           <button
-            className="lg:hidden focus:outline-none"
+            className="lg:hidden focus:outline-none cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -55,7 +55,6 @@ const App = () => {
           </button>
         </div>
 
-        {/* Linki desktop + mobile (w mobile pokazują się po kliknięciu hamburgera) */}
         <div
           className={`
             lg:flex lg:flex-1 md:justify-center sm:space-x-0 md:space-x-1 md:text-2xl lg:text-4xl md:font-medium md:select-none
@@ -113,7 +112,7 @@ const App = () => {
                 removeToken();
                 window.location.href = '/';
               }}
-              className="block w-full md:w-auto px-3 py-1.5 mt-2 md:mt-2 text-center text-sm text-white bg-[#003366] border border-white rounded hover:bg-red-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-red-400 transition-all duration-300"
+              className="block w-full md:w-auto px-3 py-1.5 mt-2 md:mt-2 text-center text-sm text-white bg-[#003366] border border-white rounded hover:bg-red-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-red-400 transition-all duration-300 cursor-pointer"
             >
               Logout
             </button>

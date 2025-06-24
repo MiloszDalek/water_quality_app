@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import '../pages/History.css'
 
 interface ExportPanelProps {
   onExport: (fileName: string, fileType: "csv" | "excel") => void;

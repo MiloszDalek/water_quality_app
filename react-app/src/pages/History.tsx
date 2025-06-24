@@ -3,7 +3,6 @@ import ChartComponent from "../components/ChartComponent";
 import SamplesFilter from "../components/SamplesFilter";
 import ExportPanel from "../components/ExportPanel";
 import AddSampleComponent from "../components/AddSampleComponent";
-import './History.css'
 import legalLimits, { parameterUnits } from "../utils/legalLimits";
 import type { ParameterName } from "../utils/legalLimits";
 import { exportToExcel, exportToCSV } from "../utils/exportUtils";
