@@ -80,7 +80,7 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
       >
         &times;
       </button>
-      <h3 className="text-xl font-semibold mb-4 text-gray-800">Add New Sample</h3>
+      <h3 className="text-xl md:text-3xl font-semibold mb-4 text-gray-800 text-center">Add New Sample</h3>
       <form onSubmit={handleSubmit} className="space-y-1 md:space-y-3">
         {/* Sample type */}
         <div>
