@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getToken } from '../utils/auth';
+import { parameterUnits } from '../utils/legalLimits';
 
 interface AddSampleComponentProps {
   onClose: () => void;
@@ -29,8 +30,15 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const cleanedPayload = Object.fromEntries(
+    Object.entries(formData).map(([key, value]) => [
+      key,
+      value === '' ? null : value,
+      ])
+    );
+
     const payload = {
-      ...formData,
+      ...cleanedPayload,
       prediction: -1,
       confidence: -1,
     };
@@ -97,7 +105,7 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
           .map((param) => (
             <div key={param}>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {param}:
+                {param} {parameterUnits[param as keyof typeof parameterUnits] ? `(${parameterUnits[param as keyof typeof parameterUnits]})` : ''}:
               </label>
               <input
                 type="number"
@@ -105,7 +113,6 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
                 value={formData[param as keyof typeof formData]}
                 onChange={handleChange}
                 step="any"
-                required
                 className="w-full px-3 py-2 border rounded text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
@@ -130,7 +137,7 @@ const AddSampleComponent: React.FC<AddSampleComponentProps> = ({ onClose, onSamp
         <div className="pt-4 flex justify-center">
           <button
             type="submit"
-            className="w-full md:max-w-[150px] bg-[#1e3a8a] hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow-sm transition-all"
+            className="w-full md:max-w-[150px] bg-[#1e3a8a] cursor-pointer hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow-sm transition-all"
           >
             Add
           </button>

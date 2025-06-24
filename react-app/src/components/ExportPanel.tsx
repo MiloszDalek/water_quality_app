@@ -29,14 +29,14 @@ const ExportPanel: React.FC<ExportPanelProps> = ({ onExport }) => {
       <select
         value={fileType}
         onChange={(e) => setFileType(e.target.value as "csv" | "excel")}
-        className="px-3 py-2 border rounded w-full sm:w-40 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+        className="px-3 py-2 border rounded w-full cursor-pointer sm:w-40 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
       >
         <option value="excel">Excel (.xlsx)</option>
         <option value="csv">CSV (.csv)</option>
       </select>
       <button 
         onClick={handleExport} 
-        className="px-4 py-2 bg-[#1e3a8a] text-white rounded hover:bg-blue-700 transition-all text-sm w-full sm:w-auto"
+        className="px-4 py-2 bg-[#1e3a8a] text-white rounded hover:bg-blue-700 transition-all text-sm w-full sm:w-auto cursor-pointer"
       >
         Export
       </button>

@@ -137,7 +137,7 @@ const ChartComponent: React.FC<Props> = ({ data }) => {
         <select
           value={selectedParam}
           onChange={e => setSelectedParam(e.target.value as ParameterName)}
-          className="w-full max-w-xs px-3 py-2 mb-0 md:mb-2 border border-gray-300 rounded shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="w-full max-w-xs px-3 py-2 mb-0 md:mb-2 cursor-pointer border border-gray-300 rounded shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
         >
           <option value="Ammonium">Ammonium</option>
           <option value="Phosphate">Phosphate</option>

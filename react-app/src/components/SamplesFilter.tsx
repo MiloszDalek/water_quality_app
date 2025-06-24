@@ -8,7 +8,7 @@ function SamplesFilter({ selectedType, setSelectedType }: { selectedType: string
         id="sampleType"
         value={selectedType}
         onChange={e => setSelectedType(e.target.value)}
-        className="px-3 py-2 border rounded w-full sm:w-40 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+        className="px-3 py-2 border rounded w-full cursor-pointer sm:w-40 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
       >
         {sampleTypes.map(type => (
           <option key={type} value={type}>

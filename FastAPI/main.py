@@ -42,16 +42,16 @@ db_dependency = Annotated[Session, get_db]
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 class InputData(BaseModel):
-    Ammonium: float
-    Phosphate: float
-    COD: float
-    BOD: float
-    Conductivity: float
-    PH: float
-    Nitrogen: float
-    Nitrate: float
-    Turbidity: float
-    TSS: float
+    Ammonium: Optional[float] = None
+    Phosphate: Optional[float] = None
+    COD: Optional[float] = None
+    BOD: Optional[float] = None
+    Conductivity: Optional[float] = None
+    PH: Optional[float] = None
+    Nitrogen: Optional[float] = None
+    Nitrate: Optional[float] = None
+    Turbidity: Optional[float] = None
+    TSS: Optional[float] = None
 
 
 class SaveSampleData(InputData):
@@ -63,16 +63,16 @@ class SaveSampleData(InputData):
 
 class SampleSummary(BaseModel):
     id: int
-    Ammonium: float
-    Phosphate: float
-    COD: float
-    BOD: float
-    Conductivity: float
-    PH: float
-    Nitrogen: float
-    Nitrate: float
-    Turbidity: float
-    TSS: float
+    Ammonium: Optional[float] = None
+    Phosphate: Optional[float] = None
+    COD: Optional[float] = None
+    BOD: Optional[float] = None
+    Conductivity: Optional[float] = None
+    PH: Optional[float] = None
+    Nitrogen: Optional[float] = None
+    Nitrate: Optional[float] = None
+    Turbidity: Optional[float] = None
+    TSS: Optional[float] = None
     prediction: int
     confidence: float
     sample_type: str

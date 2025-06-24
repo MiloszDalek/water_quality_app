@@ -295,13 +295,15 @@ const History: React.FC = () => {
                                 : 'bg-transparent text-gray-700'
                           }`}
                         >
-                           {sample[param]} {parameterUnits[param]}
+                          {sample[param] !== null && typeof sample[param] === 'number'
+                            ? `${sample[param]} ${parameterUnits[param]}`
+                            : '---'}
                         </span>
                     </li>
                 ))}
                 {isAuthenticated() && (
                   <button 
-                    className="mt-6 w-1/2 mx-auto block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded transition-colors duration-200"
+                    className="mt-6 w-1/2 mx-auto block bg-red-600 cursor-pointer hover:bg-red-700 text-white font-semibold py-2 rounded transition-colors duration-200"
                     onClick={() => onDelete(sample.id)}
                   >
                     Delete
@@ -342,7 +344,7 @@ const History: React.FC = () => {
           {isAuthenticated() && (
             <button 
               onClick={() => setShowForm(true)} 
-              className="px-4 py-2 bg-[#1e3a8a] w-full sm:max-w-[410px] text-white rounded hover:bg-blue-700 transition-all text-sm"
+              className="px-4 py-2 bg-[#1e3a8a] w-full sm:max-w-[410px] cursor-pointer text-white rounded hover:bg-blue-700 transition-all text-sm"
             >
               Add Sample
             </button>
