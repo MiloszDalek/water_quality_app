@@ -151,7 +151,7 @@ const filteredSortedData = [...data]
             <option value="Turbidity">Turbidity</option>
             <option value="TSS">TSS</option>
           </select>
-          <div className="mt-4 flex ml-3 items-center pb-6 space-x-2">
+          <div className="mt-4 flex ml-3 items-center sm:pb-6 space-x-2">
             <input
               id="showLimits"
               type="checkbox"
