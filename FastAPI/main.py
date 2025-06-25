@@ -177,7 +177,10 @@ def get_sample(sample_id: int, db: Session = Depends(get_db)):
 
 
 @app.delete("/samples/{sample_id}", response_model=None)
-def delete_record(sample_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+def delete_record(sample_id: int,
+                  db: Session = Depends(get_db), 
+                  current_user: dict = Depends(get_current_user)
+                  ):
     record = db.query(SampleRecord).filter(SampleRecord.id == sample_id).first()
     if not record:
         raise HTTPException(status_code=404, detail="Sample not found")

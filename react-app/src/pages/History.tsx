@@ -6,7 +6,7 @@ import AddSampleComponent from "../components/AddSampleComponent";
 import legalLimits, { parameterUnits } from "../utils/legalLimits";
 import type { ParameterName } from "../utils/legalLimits";
 import { exportToExcel, exportToCSV } from "../utils/exportUtils";
-import { isAuthenticated, getLoggedUserId } from "../utils/auth";
+import { isAuthenticated, getLoggedUserId, getToken } from "../utils/auth";
 
 interface Sample {
   id: number;
@@ -154,9 +154,15 @@ const History: React.FC = () => {
   const onDelete = async (id: number) => {
     if (!window.confirm("Are you sure you want to delete this sample?")) return;
 
+    const token = getToken();
+
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/samples/${id}`, {
-        method: 'DELETE',
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
         });
 
         if (!response.ok) {
